@@ -1,0 +1,18 @@
+# Python Virtual Environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Database
+src/core/profilepull.db
+src/core/*.db-journal
+
+# Local Environment variables
+.env
+
+# MacOS artifacts
+.DS_Store
+
+# Large binaries and Executables
+*.exe

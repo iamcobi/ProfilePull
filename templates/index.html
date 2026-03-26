@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfilePull Web</title>
+    <!-- Embedded Fonts from Template -->
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="dark-page app-body">
+
+    <!-- Primary Application Window -->
+    <div class="app-window window">
+        <div class="window-bar">
+            <div class="dot dot-red"></div>
+            <div class="dot dot-yellow"></div>
+            <div class="dot dot-green"></div>
+            <div class="window-title" id="top-title">ProfilePull</div>
+        </div>
+        
+        <div class="window-body">
+            <!-- Header (Logo + Nav) -->
+            <div class="app-header">
+                <div class="app-wordmark">Profile<span>Pull</span></div>
+                <div class="app-nav">
+                    <div class="nav-item tab-btn active" data-target="download">Download</div>
+                    <div class="nav-item tab-btn" data-target="history">History</div>
+                    <div class="nav-item tab-btn" data-target="settings">Settings</div>
+                </div>
+            </div>
+
+            <!-- Download Screen -->
+            <div id="download" class="tab-content active">
+                <div class="input-section">
+                    <div class="input-label">Profile or Video URL</div>
+                    <div class="input-row">
+                        <input type="text" id="url-input" class="url-input" placeholder="Paste a TikTok, Instagram, or YouTube link..." autocomplete="off">
+                        <button id="pull-btn" class="pull-btn">PULL</button>
+                    </div>
+                    <div class="platform-detected hidden" id="platform-badge">
+                        <div class="platform-dot"></div>
+                        <span id="platform-text"></span>
+                    </div>
+                </div>
+
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-platform">—</div>
+                        <div class="stat-label">Platform</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-videos">—</div>
+                        <div class="stat-label">Videos Found</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-pulled">—</div>
+                        <div class="stat-label">Last Pulled</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-status">—</div>
+                        <div class="stat-label">Status</div>
+                    </div>
+                </div>
+
+                <div class="progress-section" id="progress-container" style="opacity:0.3;">
+                    <div class="progress-meta">
+                        <div class="progress-username" id="prog-title">Waiting for URL</div>
+                        <div class="progress-pct" id="prog-pct">0%</div>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+                    </div>
+                    <div class="progress-status" id="prog-status">No active download</div>
+                </div>
+            </div>
+
+            <!-- History Screen -->
+            <div id="history" class="tab-content hidden">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Platform</th>
+                            <th>Last Pulled</th>
+                            <th>Videos</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body">
+                        <!-- JS injects rows here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Settings Screen -->
+            <div id="settings" class="tab-content hidden">
+                <div class="settings-group">
+                    <div style="font-size:9px; letter-spacing:0.3em; text-transform:uppercase; color:rgba(255,255,255,0.2); margin-bottom:8px;">Storage</div>
+                    
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-info-title">Download Location</div>
+                            <div class="settings-info-desc">Set your root download folder</div>
+                        </div>
+                        <input type="text" id="base-dir" class="url-input" style="width: 250px; padding:8px 12px; font-size:11px;" placeholder="e.g. C:/ProfilePull">
+                    </div>
+                    
+                    <div class="settings-row">
+                        <button id="save-settings-btn" class="pull-btn" style="padding: 10px 20px;">Save Configuration</button>
+                        <span id="settings-status" style="font-family: 'DM Mono'; font-size: 11px; color: rgba(255,255,255,0.5);"></span>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <div style="font-size:9px; letter-spacing:0.3em; text-transform:uppercase; color:rgba(255,255,255,0.2); margin-bottom:8px;">Application</div>
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-info-title">Version</div>
+                            <div class="settings-info-desc">ProfilePull Web Server v1.0.0</div>
+                        </div>
+                        <div class="settings-control" style="color:rgba(255,255,255,0.2); cursor:default; background:transparent; border:none;">Up to Date</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <!-- Signature Footer -->
+    <div style="text-align: center; margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+        <span style="font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.15em; font-family: 'DM Mono', monospace; text-transform: uppercase;">
+            Made by Chukwuebuka Obi
+        </span>
+        <div style="display: flex; gap: 15px;">
+            <a href="https://www.linkedin.com/in/chukwuebuka-obi-662504310/" target="_blank" style="color: rgba(255,255,255,0.5); transition: color 0.2s;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+            </a>
+            <a href="https://github.com/iamcobi" target="_blank" style="color: rgba(255,255,255,0.5); transition: color 0.2s;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Duplicate Profile Modal -->
+    <div id="duplicate-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-icon">⚠</div>
+            <div class="modal-title">Archive Overlap Detected</div>
+            <div class="modal-body" id="duplicate-msg">
+                <!-- Message injected by JS -->
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button class="modal-btn" id="modal-cancel" style="background:rgba(255,255,255,0.1); color:#fff;">Cancel</button>
+                <button class="modal-btn" id="modal-confirm" style="background:#fff; color:#000;">Proceed & Update</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html>
