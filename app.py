@@ -40,6 +40,16 @@ def get_history():
         d["video_count"] = len(vids)
     return jsonify({"downloads": downloads})
 
+@app.route("/api/history", methods=["DELETE"])
+def delete_history():
+    db.clear_history()
+    return jsonify({"status": "cleared"}), 200
+
+@app.route("/api/history/<int:download_id>", methods=["DELETE"])
+def delete_single_history(download_id):
+    db.delete_download(download_id)
+    return jsonify({"status": "deleted"}), 200
+
 @app.route("/api/check_duplicate", methods=["POST"])
 def check_duplicate():
     data = request.json
@@ -85,10 +95,12 @@ def start_download():
         "label": label
     }
 
-    def progress_callback(msg, pct):
+    def progress_callback(msg, pct, total=None):
         if task_id in running_tasks:
             running_tasks[task_id]["msg"] = msg
             running_tasks[task_id]["pct"] = pct
+            if total is not None:
+                running_tasks[task_id]["total"] = total
 
     def task_thread():
         try:
