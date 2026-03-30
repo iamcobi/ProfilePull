@@ -1,11 +1,11 @@
 # ProfilePull Web 🚀
-**The Ultimate Cross-Platform Profile Archiver**  
+**The Ultimate Social Media Downloading Software.**  
 *Built by Chukwuebuka Obi (@iamcobi)*  
 👉 [Got Feedback? Report an Issue or Suggest a Feature here!](https://github.com/iamcobi/ProfilePull/issues)
 
 ---
 
-As an AI expert passionate about streamlining data acquisition, I engineered **ProfilePull** to circumvent the erratic limitations and data-silos of modern social media platforms. I vibe coded it to elegantly harvest profiles, bios, avatars, and asynchronous video metadata seamlessly across TikTok, YouTube, and Instagram — directly into a single, unified, premium local web dashboard.
+As an AI expert passionate about streamlining data acquisition, I engineered **ProfilePull** to circumvent the erratic limitations. I vibe coded it to elegantly harvest profiles, bios, avatars, and asynchronous video metadata seamlessly across TikTok, YouTube, and Instagram — directly into a single, unified, premium local web dashboard.
 
 ## 🌟 What's New in Version 2.0
 - **Asynchronous Multi-Threading:** ProfilePull now spawns 5 parallel connection pipes dynamically boosting extraction speeds by 500%.
