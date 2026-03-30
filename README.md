@@ -35,14 +35,14 @@ As an AI expert passionate about streamlining data acquisition, I engineered **P
 
 2. **Auto-Install Dependencies:**
    - **On Windows:** Double-click the `install.bat` file to automatically build your virtual environment.
-   - **On Linux/macOS:** Run `python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt`.
+   - **On Linux/macOS:** Run `python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt` inside the folder directory. 
 
 3. **Instagram Authentication Setup (CRITICAL STEP):**
    To successfully scrape massive Instagram profiles without Meta instantly IP blocking you, you **must** export your logged-in Instagram session into a `cookies.txt` file and place it in the root `ProfilePull` folder.
    
    **How to get your `cookies.txt` file in 30 seconds:**
    1. Open Google Chrome, Firefox, or Edge.
-   2. Install the free [Get cookies.txt LOCALLY](https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpocnjdlcennh) browser extension.
+   2. Install the free [Get cookies.txt LOCALLY](https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc) browser extension.
    3. Go to [Instagram.com](https://www.instagram.com/) and ensure you are logged in to any account (a burner account is highly recommended).
    4. Click the extension icon in your browser toolbar and select **Export**.
    5. Move the downloaded `cookies.txt` file exactly into the root folder of this repository (right next to `app.py`).
