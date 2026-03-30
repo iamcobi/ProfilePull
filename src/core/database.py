@@ -41,10 +41,19 @@ class Database:
                 filename TEXT,
                 view_count INTEGER,
                 view_folder TEXT,
-                downloaded_at TEXT
+                downloaded_at TEXT,
+                is_short INTEGER DEFAULT 0
             );
             """)
             conn.commit()
+            
+            # Migrate existing tables seamlessly without losing historical user data
+            try:
+                cursor.execute("ALTER TABLE videos ADD COLUMN is_short INTEGER DEFAULT 0;")
+                conn.commit()
+            except sqlite3.OperationalError:
+                pass # Column already exists
+                
         except Exception as e:
             logger.error(f"Failed to init DB: {e}")
         finally:
@@ -86,7 +95,7 @@ class Database:
         finally:
             conn.close()
 
-    def add_video(self, download_id: int, video_id: str, title: str, filename: str, view_count: int, view_folder: str):
+    def add_video(self, download_id: int, video_id: str, title: str, filename: str, view_count: int, view_folder: str, is_short: bool = False):
         conn = self._get_conn()
         try:
             cursor = conn.cursor()
@@ -95,9 +104,9 @@ class Database:
             if not cursor.fetchone():
                 now_str = datetime.now().isoformat()
                 cursor.execute("""
-                    INSERT INTO videos (download_id, video_id, title, filename, view_count, view_folder, downloaded_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (download_id, video_id, title, filename, view_count, view_folder, now_str))
+                    INSERT INTO videos (download_id, video_id, title, filename, view_count, view_folder, downloaded_at, is_short)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """, (download_id, video_id, title, filename, view_count, view_folder, now_str, 1 if is_short else 0))
                 # Update download count
                 cursor.execute("UPDATE downloads SET video_count = video_count + 1 WHERE id = ?", (download_id,))
                 conn.commit()
@@ -139,6 +148,16 @@ class Database:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM videos")
             cursor.execute("DELETE FROM downloads")
+            conn.commit()
+        finally:
+            conn.close()
+
+    def delete_download(self, download_id: int):
+        conn = self._get_conn()
+        try:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM videos WHERE download_id = ?", (download_id,))
+            cursor.execute("DELETE FROM downloads WHERE id = ?", (download_id,))
             conn.commit()
         finally:
             conn.close()
