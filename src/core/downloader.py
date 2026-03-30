@@ -11,24 +11,53 @@ def get_ffmpeg_location():
         return sys._MEIPASS
     return None
 
+def extract_with_fallbacks(url: str, download: bool, base_opts: dict) -> dict:
+    browsers = []
+    
+    # Priority 1: Direct Cookie injection (bypasses all Windows DPAPI and SQLite locking)
+    cookie_path = os.path.join(os.getcwd(), "cookies.txt")
+    if os.path.exists(cookie_path):
+        browsers.append(f"cookiefile:{cookie_path}")
+        
+    # Priority 2: Fallback to Chromium variants natively
+    browsers.extend(['edge', 'chrome', 'firefox', None])
+    
+    last_error = None
+    
+    for browser in browsers:
+        opts = dict(base_opts)
+        
+        if browser and str(browser).startswith("cookiefile:"):
+            opts['cookiefile'] = str(browser).split("cookiefile:")[1]
+        elif browser:
+            opts['cookiesfrombrowser'] = (browser,)
+            
+        try:
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                return ydl.extract_info(url, download=download)
+        except Exception as e:
+            last_error = e
+            logger.warning(f"[yt-dlp] Fallback iteration {browser} failed: {str(e)}")
+            
+    # If all fail, throw the final exception to bubble up
+    raise last_error
+
 def get_video_info(url: str, extract_flat: bool = False) -> dict:
     ydl_opts = {
         'quiet': True,
         'no_warnings': True,
-        'extract_flat': extract_flat  # True for fast playlist extraction
+        'extract_flat': extract_flat
     }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        return ydl.extract_info(url, download=False)
+    return extract_with_fallbacks(url, download=False, base_opts=ydl_opts)
 
 def download_video(url: str, output_path: str, quality_format: str = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best', progress_hook: Optional[Callable] = None) -> dict:
     ydl_opts = {
         'format': quality_format,
         'merge_output_format': 'mp4',
-        # Restrict filenames pattern to match sanitized naming
         'restrictfilenames': True,
-        'outtmpl': os.path.join(output_path, '%(title)s.%(ext)s'),
+        'outtmpl': os.path.join(output_path, '%(title)s_%(id)s.%(ext)s'),
         'quiet': True,
-        'no_warnings': True,
+        'no_warnings': True
     }
     
     ffmpeg_loc = get_ffmpeg_location()
@@ -38,5 +67,4 @@ def download_video(url: str, output_path: str, quality_format: str = 'bestvideo[
     if progress_hook:
         ydl_opts['progress_hooks'] = [progress_hook]
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        return ydl.extract_info(url, download=True)
+    return extract_with_fallbacks(url, download=True, base_opts=ydl_opts)
