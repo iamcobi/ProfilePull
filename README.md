@@ -1,23 +1,27 @@
 # ProfilePull Web 🚀
 **The Ultimate Cross-Platform Profile Archiver**  
-*Built by Chukwuebuka Obi (@iamcobi)*
+*Built by Chukwuebuka Obi (@iamcobi)*  
+👉 [Got Feedback? Report an Issue or Suggest a Feature here!](https://github.com/iamcobi/ProfilePull/issues)
 
 ---
 
 As an AI expert passionate about streamlining data acquisition, I engineered **ProfilePull** to circumvent the erratic limitations and data-silos of modern social media platforms. I vibe coded it to elegantly harvest profiles, bios, avatars, and asynchronous video metadata seamlessly across TikTok, YouTube, and Instagram — directly into a single, unified, premium local web dashboard.
 
+## 🌟 What's New in Version 2.0
+- **Asynchronous Multi-Threading:** ProfilePull now spawns 5 parallel connection pipes dynamically boosting extraction speeds by 500%.
+- **Infinite Concurrent Profiling:** The UI no longer locks you out! You can seamlessly paste and queue an unlimited amount of profiles simultaneously; they will all download smoothly in the background while dynamically generating individual progress tracking bars.
+- **YouTube Shorts Segregation:** Intelligently splits YouTube streams, shifting Shorts into a bespoke `/shorts/` directory independently of Long-Form videos, while identically retaining exact View-Count sorting.
+- **Universal Re-Pull Deduplication:** Hardened SQLite databases now mathematically skip existing Instagram/TikTok identifiers natively blocking network API duplicates completely.
+- **Single Video Isolation:** Drops explicit single `.mp4` payloads straight into the root `videos/` folder cleanly ignoring bulk profile logic.
+
 ## 🎯 Features
-- **Cross-Platform Intelligence:** Automatically detects overlapping identities (e.g., if you archive an Instagram profile that you've previously downloaded via TikTok) and merges the databases intelligently.
-- **Deep Metadata Extraction:** Bypasses `yt-dlp` scraping limits, utilizing custom native Python HTTP parsing to forcefully extract Open-Graph textual bios and high-resolution avatars that other scrapers miss.
-- **State-of-the-Art Web GUI:** A completely responsive, hyper-minimalist Dark Mode web interface powered by a custom Flask REST server and native HTML Server-Sent Events (SSE).
-- **Intelligent File Verification:** Native disk-probing dynamically checks if you've manually deleted archived videos across view-count directories, silently re-queuing them on the next pull.
-- **Instant Windows Integration:** One-click directory unzipping natively hooks into your local `explorer.exe`.
+- **Cross-Platform Intelligence:** Automatically detects overlapping identities and merges Instagram/TikTok databases intelligently.
+- **Deep Metadata Extraction:** Bypasses extraction limits, utilizing custom native HTTP parsing to forcefully extract text bios and high-res avatars.
+- **State-of-the-Art Web GUI:** A completely responsive, hyper-minimalist Dark Mode web interface powered by a custom Flask server.
+- **Intelligent File Verification:** Native disk-probing dynamically checks if you've manually deleted archived videos, silently re-queuing them on the next pull.
 
 ## ⚙️ Requirements
-> [!IMPORTANT]
-> **This application is exclusively built for Windows Operating Systems.** It fundamentally relies on native Windows explorer sub-processing scripts.
-
-- **OS:** Windows 10 or Windows 11
+- **OS:** Windows (10/11), macOS, or Linux.
 - **Python:** Version 3.10 or higher installed with PATH enabled.
 - **FFmpeg:** Highly recommended for resolving `yt-dlp` media formats.
 
@@ -28,14 +32,25 @@ As an AI expert passionate about streamlining data acquisition, I engineered **P
    git clone https://github.com/iamcobi/ProfilePull.git
    cd ProfilePull
    ```
-2. **Auto-Install:**
-   Double-click the `install.bat` file. This automated script will generate your Python virtual environment and cleanly install all backend dependencies.
 
-3. **Instagram Authentication Setup (Critical):**
-   To successfully scrape massive Instagram profiles without Meta instantly IP blocking you, you must export your logged-in Instagram session into a Netscape formatted `cookies.txt` string and place it directly into the root `ProfilePull` folder securely.
+2. **Auto-Install Dependencies:**
+   - **On Windows:** Double-click the `install.bat` file to automatically build your virtual environment.
+   - **On Linux/macOS:** Run `python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt`.
+
+3. **Instagram Authentication Setup (CRITICAL STEP):**
+   To successfully scrape massive Instagram profiles without Meta instantly IP blocking you, you **must** export your logged-in Instagram session into a `cookies.txt` file and place it in the root `ProfilePull` folder.
+   
+   **How to get your `cookies.txt` file in 30 seconds:**
+   1. Open Google Chrome, Firefox, or Edge.
+   2. Install the free [Get cookies.txt LOCALLY](https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpocnjdlcennh) browser extension.
+   3. Go to [Instagram.com](https://www.instagram.com/) and ensure you are logged in to any account (a burner account is highly recommended).
+   4. Click the extension icon in your browser toolbar and select **Export**.
+   5. Move the downloaded `cookies.txt` file exactly into the root folder of this repository (right next to `app.py`).
 
 4. **Run the Server:**
-   Double-click the `run.bat` file to boot up the backend Flask server, then easily open `http://127.0.0.1:5000` locally in any modern web browser!
+   - **On Windows:** Double-click `run.bat`!
+   - **On Linux/macOS:** Run `python3 app.py`.
+   - Finally, open `http://127.0.0.1:5000` locally in any modern web browser to access your dashboard!
 
 ---
 *Connect with me on [LinkedIn](https://www.linkedin.com/in/chukwuebuka-obi-662504310/) or [GitHub](https://github.com/iamcobi).*

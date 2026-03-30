@@ -244,38 +244,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Sync to the single static progress container from the template
-            document.getElementById('progress-container').style.opacity = '1';
-            document.getElementById('prog-title').innerText = data.label;
-            document.getElementById('prog-pct').innerText = '0%';
-            document.getElementById('prog-fill').style.width = '0%';
-            document.getElementById('prog-status').innerText = 'Connecting...';
+            // Add new dynamic progress bar
+            const progressList = document.getElementById('progress-list');
+            const emptyState = document.getElementById('progress-empty');
+            if (emptyState) emptyState.style.display = 'none';
+
+            const taskId = data.task_id;
+            const block = document.createElement('div');
+            block.id = `prog-container-${taskId}`;
+            block.style.marginBottom = '15px';
+            block.innerHTML = `
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <div class="progress-title" id="prog-title-${taskId}">${data.label}</div>
+                    <div class="progress-title" id="prog-pct-${taskId}" style="color:#ffffff;">0%</div>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="prog-fill-${taskId}" style="width:0%"></div>
+                </div>
+                <div class="progress-status" id="prog-status-${taskId}">Connecting...</div>
+            `;
+            // Insert at the top so newest is visible first
+            progressList.insertBefore(block, progressList.firstChild);
+            
             document.getElementById('stat-status').innerText = 'Active';
             
             // Immediately disconnect visual lockout globally permitting multiple synchronous queue injections without destroying background connection vectors.
             resetPullBtn();
 
-            if (currentEventSource) currentEventSource.close();
-            currentEventSource = new EventSource('/api/progress/' + data.task_id);
+            const es = new EventSource('/api/progress/' + taskId);
             
-            currentEventSource.onmessage = function(event) {
+            if (!window.activeDownloads) window.activeDownloads = 0;
+            window.activeDownloads++;
+
+            es.onmessage = function(event) {
                 const state = JSON.parse(event.data);
                 
-                document.getElementById('prog-status').innerText = state.msg;
-                document.getElementById('prog-pct').innerText = `${state.pct}%`;
-                document.getElementById('prog-fill').style.width = `${state.pct}%`;
+                document.getElementById(`prog-status-${taskId}`).innerText = state.msg;
+                document.getElementById(`prog-pct-${taskId}`).innerText = `${state.pct}%`;
+                document.getElementById(`prog-fill-${taskId}`).style.width = `${state.pct}%`;
                 
                 if (state.total !== undefined) {
                     document.getElementById('stat-videos').innerText = state.total;
                 }
 
                 if (state.status === 'completed' || state.status === 'error') {
-                    currentEventSource.close();
-                    document.getElementById('stat-status').innerText = state.status === 'completed' ? 'Done' : 'Error';
+                    es.close();
+                    
                     if (state.status === 'completed') {
-                        document.getElementById('prog-fill').style.background = '#FFFFFF';
+                        document.getElementById(`prog-fill-${taskId}`).style.background = '#FFFFFF';
                     } else {
-                        document.getElementById('prog-fill').style.background = '#ff4d4d';
+                        document.getElementById(`prog-fill-${taskId}`).style.background = '#ff4d4d';
+                    }
+
+                    window.activeDownloads--;
+                    if (window.activeDownloads <= 0) {
+                        document.getElementById('stat-status').innerText = 'Done';
+                        window.activeDownloads = 0;
                     }
                 }
             };
