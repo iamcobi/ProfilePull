@@ -16,3 +16,7 @@ src/core/*.db-journal
 
 # Large binaries and Executables
 *.exe
+
+# Private Session Tokens (CRITICAL: DO NOT COMMIT)
+cookies.txt
+*.txt
