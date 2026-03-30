@@ -304,14 +304,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             };
 
-            currentEventSource.onerror = function() {
-                document.getElementById('prog-status').innerText = "Connection lost.";
+            es.onerror = function() {
+                const statusEl = document.getElementById(`prog-status-${taskId}`);
+                if (statusEl) statusEl.innerText = "Connection lost.";
                 document.getElementById('stat-status').innerText = 'Error';
-                currentEventSource.close();
-                resetPullBtn();
+                es.close();
+                window.activeDownloads--;
+                if (window.activeDownloads <= 0) {
+                    window.activeDownloads = 0;
+                }
             };
         } catch(e) {
-            alert('Error starting download.');
+            console.error('Download start error:', e);
             resetPullBtn();
         }
     }

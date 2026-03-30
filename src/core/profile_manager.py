@@ -421,9 +421,56 @@ def download_single_video(url: str, username: str, platform: str, base_path: str
     temp_videos_root = Path(tempfile.gettempdir()) / "ProfilePull" / tmp_uuid
     temp_videos_root.mkdir(parents=True, exist_ok=True)
     
-    if progress_callback: progress_callback("Downloading single video...", 10)
+    if progress_callback: progress_callback("Downloading single video natively...", 10)
     try:
-        vid_info = download_video(url, str(temp_videos_root))
+        vid_info = {"id": "single", "title": "video", "view_count": 0}
+        
+        if platform.lower() == "instagram":
+            if progress_callback: progress_callback("Engaging gallery-dl Instagram bypass...", 20)
+            import subprocess
+            cookie_path = os.path.join(os.getcwd(), "cookies.txt")
+            
+            if not os.path.exists(cookie_path):
+                raise Exception("cookies.txt not found! Instagram requires authentication. See README for setup instructions.")
+            
+            config = {
+                "extractor": {
+                    "instagram": {
+                        "api": "rest",
+                        "cookies": str(cookie_path),
+                        "videos": True,
+                        "filename": "{shortcode}.{extension}"
+                    }
+                }
+            }
+            config_file = temp_videos_root / "config.json"
+            with open(config_file, "w") as f:
+                json.dump(config, f)
+            
+            cmd = ["gallery-dl", "--config", str(config_file), "-d", str(temp_videos_root), url]
+            
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                err_text = result.stderr.strip()
+                if "login" in err_text.lower() or "401" in err_text:
+                    raise Exception("Your Instagram cookies.txt has expired! Please re-export a fresh cookies.txt from your browser. See README for instructions.")
+                raise Exception(f"gallery-dl failed: {err_text}")
+                
+        else:
+            if progress_callback: progress_callback("Using native yt-dlp core...", 20)
+            
+            def ydl_hook(d):
+                if d['status'] == 'downloading':
+                    try:
+                        pct_str = d.get('_percent_str', '').strip()
+                        if pct_str:
+                            pct_val = float(pct_str.replace('%', ''))
+                            scaled_pct = 20 + int((pct_val / 100.0) * 70)
+                            if progress_callback: progress_callback(f"Downloading: {pct_str}", scaled_pct)
+                    except:
+                        pass
+            
+            vid_info = download_video(url, str(temp_videos_root), progress_hook=ydl_hook)
         
         raw_vc = vid_info.get("view_count", 0)
         if isinstance(raw_vc, str):
@@ -432,7 +479,13 @@ def download_single_video(url: str, username: str, platform: str, base_path: str
         else:
             view_count = int(raw_vc) if raw_vc is not None else 0
         
-        downloaded_file = next(temp_videos_root.iterdir(), None)
+        downloaded_file = None
+        for root_dir, dirs, files in os.walk(str(temp_videos_root)):
+            for f in files:
+                if f.endswith(".mp4") or f.endswith(".webm"):
+                    downloaded_file = Path(root_dir) / f
+                    break
+        
         if downloaded_file:
             target_folder = videos_root
             target_folder.mkdir(parents=True, exist_ok=True)
@@ -449,9 +502,12 @@ def download_single_video(url: str, username: str, platform: str, base_path: str
             )
             
             if progress_callback: progress_callback(f"Done. Saved to {target_folder.name}/{downloaded_file.name}.", 100)
+        else:
+            raise Exception("No output file generated. The platform likely blocked the download request natively.")
             
         if temp_videos_root.exists():
             shutil.rmtree(str(temp_videos_root), ignore_errors=True)
     except Exception as e:
         logger.error(f"Failed to download single video {url}: {e}")
-        if progress_callback: progress_callback("Download failed.", 0)
+        if progress_callback: progress_callback(f"Download failed: {str(e)}", 0)
+        raise e
