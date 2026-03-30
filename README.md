@@ -26,7 +26,7 @@ As an AI expert passionate about streamlining data acquisition, I engineered **P
 ## ⚙️ Requirements
 - **OS:** Windows (10/11), macOS, or Linux.
 - **Python:** Version 3.10 or higher installed with PATH enabled.
-- **FFmpeg:** Highly recommended for resolving `yt-dlp` media formats.
+- **FFmpeg:** Automatically installed via `pip install -r requirements.txt` (bundled through `imageio-ffmpeg`). No manual download needed.
 
 ## 📥 Installation
 

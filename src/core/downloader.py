@@ -7,8 +7,19 @@ from typing import Callable, Optional
 logger = logging.getLogger(__name__)
 
 def get_ffmpeg_location():
+    # Priority 1: PyInstaller frozen bundle
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS
+    
+    # Priority 2: imageio-ffmpeg pip package (bundles a static ffmpeg binary)
+    try:
+        import imageio_ffmpeg
+        ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
+        if ffmpeg_path and os.path.exists(ffmpeg_path):
+            return os.path.dirname(ffmpeg_path)
+    except ImportError:
+        pass
+    
     return None
 
 def extract_with_fallbacks(url: str, download: bool, base_opts: dict) -> dict:
