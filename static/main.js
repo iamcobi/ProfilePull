@@ -251,6 +251,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('prog-fill').style.width = '0%';
             document.getElementById('prog-status').innerText = 'Connecting...';
             document.getElementById('stat-status').innerText = 'Active';
+            
+            // Immediately disconnect visual lockout globally permitting multiple synchronous queue injections without destroying background connection vectors.
+            resetPullBtn();
 
             if (currentEventSource) currentEventSource.close();
             currentEventSource = new EventSource('/api/progress/' + data.task_id);
@@ -274,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         document.getElementById('prog-fill').style.background = '#ff4d4d';
                     }
-                    resetPullBtn();
                 }
             };
 

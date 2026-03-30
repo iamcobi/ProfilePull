@@ -328,7 +328,14 @@ def download_profile(url: str, username: str, platform: str, base_path: str, pro
     total = len(to_download)
     if progress_callback: progress_callback("Extraction complete, preparing downloads...", 10, total=total)
     
-    for i, entry in enumerate(to_download):
+    import threading
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    
+    completed = 0
+    ui_lock = threading.Lock()
+
+    def process_entry(entry):
+        nonlocal completed
         vid_id = entry.get("id")
         vid_url = entry.get("url")
         if not vid_url and vid_id:
@@ -340,10 +347,6 @@ def download_profile(url: str, username: str, platform: str, base_path: str, pro
                 vid_url = url
             
         vid_title = sanitize_filename(entry.get("title", f"video_{vid_id}"))
-        
-        if progress_callback:
-            pct = int((i / total) * 100)
-            progress_callback(f"Downloading video {i+1} of {total}: {vid_title}.mp4", pct)
             
         try:
             videos_root = profile_root / "videos"
@@ -389,6 +392,17 @@ def download_profile(url: str, username: str, platform: str, base_path: str, pro
                 
         except Exception as e:
             logger.error(f"Failed to download video {vid_url}: {e}")
+            
+        with ui_lock:
+            completed += 1
+            if progress_callback:
+                pct = int((completed / total) * 100)
+                progress_callback(f"Downloading parallel batches ({completed} of {total} completed)...", pct)
+
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [executor.submit(process_entry, entry) for entry in to_download]
+        for f in as_completed(futures):
+            f.result()
             
     if progress_callback: progress_callback("Re-sorting videos by view count...", 99)
     re_sort_all_videos(username, base_path)
