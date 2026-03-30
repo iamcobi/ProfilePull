@@ -63,15 +63,17 @@
                     </div>
                 </div>
 
-                <div class="progress-section" id="progress-container" style="opacity:0.3;">
-                    <div class="progress-meta">
-                        <div class="progress-username" id="prog-title">Waiting for URL</div>
-                        <div class="progress-pct" id="prog-pct">0%</div>
+                <div id="progress-list" style="margin-bottom: 20px;">
+                    <div id="progress-empty" class="progress-section" style="opacity:0.3;">
+                        <div class="progress-meta">
+                            <div class="progress-username" id="prog-title">Waiting for URL</div>
+                            <div class="progress-pct" id="prog-pct">0%</div>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+                        </div>
+                        <div class="progress-status" id="prog-status">No active download</div>
                     </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
-                    </div>
-                    <div class="progress-status" id="prog-status">No active download</div>
                 </div>
             </div>
 
@@ -131,10 +133,11 @@
     </div>
     
     <!-- Signature Footer -->
-    <div style="text-align: center; margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+    <div style="position: relative; text-align: center; margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
         <span style="font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.15em; font-family: 'DM Mono', monospace; text-transform: uppercase;">
             Made by Chukwuebuka Obi
         </span>
+        <a href="https://github.com/iamcobi/ProfilePull/issues" target="_blank" style="position: absolute; right: 10px; bottom: 0; font-size: 10px; color: rgba(255,255,255,0.5); font-family: 'DM Mono', monospace; text-decoration: none; border-bottom: 1px dotted rgba(255,255,255,0.3); transition: color 0.2s;">Give Feedback</a>
         <div style="display: flex; gap: 15px;">
             <a href="https://www.linkedin.com/in/chukwuebuka-obi-662504310/" target="_blank" style="color: rgba(255,255,255,0.5); transition: color 0.2s;">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
