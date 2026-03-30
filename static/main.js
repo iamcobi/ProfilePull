@@ -79,8 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${d.video_count}</td>
                     <td>
                         <div class="action-btns">
-                            <div class="action-btn primary" onclick="redownload('${d.url}')">Re-Pull</div>
+                            <div class="action-btn primary" onclick="redownload('${d.profile_url}')">Re-Pull</div>
                             <div class="action-btn ghost" onclick="openFolder('${safePath}')">Open</div>
+                            <div class="action-btn ghost" onclick="deleteHistoryRow(${d.id})" style="color:#ffcc00;">Delete</div>
                         </div>
                     </td>
                 `;
@@ -91,12 +92,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    const clearHistoryBtn = document.getElementById('clear-history-btn');
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', async () => {
+            if (!confirm("Are you sure you want to completely wipe your download history?\\n\\n(Your physical media folders on disk will remain untouched.)")) return;
+            try {
+                const res = await fetch('/api/history', { method: 'DELETE' });
+                if (res.ok) {
+                    loadHistory();
+                }
+            } catch (e) {
+                console.error('Failed to clear history:', e);
+            }
+        });
+    }
+
     // Expose wrapper for history button
     window.redownload = function(url) {
         document.querySelector('[data-target="download"]').click();
         const input = document.getElementById('url-input');
         input.value = url;
         input.focus();
+    };
+
+    window.deleteHistoryRow = async function(id) {
+        if (!confirm("Are you sure you want to remove this profile from your history?")) return;
+        try {
+            const res = await fetch('/api/history/' + id, { method: 'DELETE' });
+            if (res.ok) {
+                loadHistory();
+            }
+        } catch (e) {
+            console.error("Failed to delete row:", e);
+        }
     };
 
     window.openFolder = async function(path) {
@@ -233,6 +261,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('prog-status').innerText = state.msg;
                 document.getElementById('prog-pct').innerText = `${state.pct}%`;
                 document.getElementById('prog-fill').style.width = `${state.pct}%`;
+                
+                if (state.total !== undefined) {
+                    document.getElementById('stat-videos').innerText = state.total;
+                }
 
                 if (state.status === 'completed' || state.status === 'error') {
                     currentEventSource.close();
