@@ -107,7 +107,7 @@ def start_download():
             if parsed["content_type"] == "profile":
                 download_profile(url, parsed["username"], parsed["platform"], config_manager.base_dir, progress_callback)
             else:
-                download_single_video(url, config_manager.base_dir, progress_callback)
+                download_single_video(url, parsed["username"], parsed["platform"], config_manager.base_dir, progress_callback)
             
             if task_id in running_tasks:
                 running_tasks[task_id]["status"] = "completed"
@@ -141,10 +141,16 @@ def progress_stream(task_id):
 @app.route("/api/open_folder", methods=["POST"])
 def open_folder():
     import subprocess
+    import platform as os_platform
     data = request.json
     path = data.get("path")
     if path and os.path.exists(path):
-        subprocess.Popen(f'explorer "{os.path.normpath(path)}"')
+        if os_platform.system() == "Windows":
+            subprocess.Popen(f'explorer "{os.path.normpath(path)}"')
+        elif os_platform.system() == "Darwin":
+            subprocess.Popen(["open", path])
+        else:
+            subprocess.Popen(["xdg-open", path])
         return jsonify({"status": "success"})
     return jsonify({"error": "Path not found"}), 404
 

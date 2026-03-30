@@ -395,9 +395,13 @@ def download_profile(url: str, username: str, platform: str, base_path: str, pro
     
     if progress_callback: progress_callback(f"Done. Downloaded {total} new videos.", 100)
 
-def download_single_video(url: str, base_path: str, progress_callback=None):
+def download_single_video(url: str, username: str, platform: str, base_path: str, progress_callback=None):
     videos_root = get_single_video_root(base_path)
     videos_root.mkdir(parents=True, exist_ok=True)
+    
+    uname = username if username and username != "unknown" else "Single Videos"
+    db_url = url if uname != "Single Videos" else "Single Videos"
+    db_id = db.get_or_create_download(uname, platform, db_url, str(videos_root))
     
     tmp_uuid = str(uuid.uuid4())
     temp_videos_root = Path(tempfile.gettempdir()) / "ProfilePull" / tmp_uuid
@@ -420,6 +424,16 @@ def download_single_video(url: str, base_path: str, progress_callback=None):
             target_folder.mkdir(parents=True, exist_ok=True)
             final_path = target_folder / downloaded_file.name
             shutil.move(str(downloaded_file), str(final_path))
+            
+            db.add_video(
+                download_id=db_id,
+                video_id=vid_info.get("id", "single_video"),
+                title=vid_info.get("title", downloaded_file.name),
+                filename=downloaded_file.name,
+                view_count=view_count,
+                view_folder=""
+            )
+            
             if progress_callback: progress_callback(f"Done. Saved to {target_folder.name}/{downloaded_file.name}.", 100)
             
         if temp_videos_root.exists():
