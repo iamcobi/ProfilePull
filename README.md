@@ -31,8 +31,11 @@ As an AI expert passionate about streamlining data acquisition, I engineered **P
 2. **Auto-Install:**
    Double-click the `install.bat` file. This automated script will generate your Python virtual environment and cleanly install all backend dependencies.
 
-3. **Run the Server:**
-   Double-click the `run.bat` file to boot up the Flask server, then easily open `http://127.0.0.1:5000` in any web browser!
+3. **Instagram Authentication Setup (Critical):**
+   To successfully scrape massive Instagram profiles without Meta instantly IP blocking you, you must export your logged-in Instagram session into a Netscape formatted `cookies.txt` string and place it directly into the root `ProfilePull` folder securely.
+
+4. **Run the Server:**
+   Double-click the `run.bat` file to boot up the backend Flask server, then easily open `http://127.0.0.1:5000` locally in any modern web browser!
 
 ---
 *Connect with me on [LinkedIn](https://www.linkedin.com/in/chukwuebuka-obi-662504310/) or [GitHub](https://github.com/iamcobi).*
