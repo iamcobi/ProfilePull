@@ -14,9 +14,16 @@ src/core/*.db-journal
 # MacOS artifacts
 .DS_Store
 
+# FFmpeg local binary folder
+bin/
+
 # Large binaries and Executables
 *.exe
 
+# Test output directories
+temp/
+test_dir/
+test_ig/
+
 # Private Session Tokens (CRITICAL: DO NOT COMMIT)
 cookies.txt
-*.txt

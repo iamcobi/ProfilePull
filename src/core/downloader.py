@@ -11,14 +11,26 @@ def get_ffmpeg_location():
     if getattr(sys, 'frozen', False):
         return sys._MEIPASS
     
-    # Priority 2: imageio-ffmpeg pip package (bundles a static ffmpeg binary)
+    # Priority 2: Local bin/ folder (already set up)
+    project_bin = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "bin")
+    ffmpeg_local = os.path.join(project_bin, "ffmpeg.exe" if sys.platform == "win32" else "ffmpeg")
+    if os.path.exists(ffmpeg_local):
+        return project_bin
+    
+    # Priority 3: imageio-ffmpeg pip package — copy the bundled binary into bin/ with the correct name
     try:
+        import shutil
         import imageio_ffmpeg
-        ffmpeg_path = imageio_ffmpeg.get_ffmpeg_exe()
-        if ffmpeg_path and os.path.exists(ffmpeg_path):
-            return os.path.dirname(ffmpeg_path)
+        source = imageio_ffmpeg.get_ffmpeg_exe()
+        if source and os.path.exists(source):
+            os.makedirs(project_bin, exist_ok=True)
+            shutil.copy2(source, ffmpeg_local)
+            logger.info(f"[FFmpeg] Copied bundled binary to {ffmpeg_local}")
+            return project_bin
     except ImportError:
-        pass
+        logger.warning("[FFmpeg] imageio-ffmpeg not installed. Run: pip install imageio-ffmpeg")
+    except Exception as e:
+        logger.warning(f"[FFmpeg] Failed to set up local binary: {e}")
     
     return None
 
