@@ -25,7 +25,8 @@ As an AI expert passionate about streamlining data acquisition, I engineered **P
 
 ## ⚙️ Requirements
 - **OS:** Windows (10/11), macOS, or Linux.
-- **Python:** Version 3.10 or higher installed with PATH enabled.
+- **Python:** Latest version installed with PATH enabled. Download from [python.org](https://www.python.org/downloads/).
+- **Git:** Required to clone the repository. Download from [git-scm.com](https://git-scm.com/downloads).
 - **FFmpeg:** Automatically installed via `pip install -r requirements.txt` (bundled through `imageio-ffmpeg`). No manual download needed.
 
 ## 📥 Installation
