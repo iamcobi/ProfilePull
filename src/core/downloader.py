@@ -73,7 +73,19 @@ def get_video_info(url: str, extract_flat: bool = False) -> dict:
     }
     return extract_with_fallbacks(url, download=False, base_opts=ydl_opts)
 
-def download_video(url: str, output_path: str, quality_format: str = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best', progress_hook: Optional[Callable] = None) -> dict:
+TIKTOK_FORMAT = 'best[vcodec^=h264][acodec!=none]/best[vcodec!=none][acodec!=none]/best'
+YOUTUBE_FORMAT = 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio/best[ext=mp4]/best'
+DEFAULT_FORMAT = 'best[vcodec!=none][acodec!=none]/bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best'
+
+def download_video(url: str, output_path: str, quality_format: str = None, progress_hook: Optional[Callable] = None, platform: str = None) -> dict:
+    if quality_format is None:
+        if platform and platform.lower() == 'tiktok':
+            quality_format = TIKTOK_FORMAT
+        elif platform and platform.lower() == 'youtube':
+            quality_format = YOUTUBE_FORMAT
+        else:
+            quality_format = DEFAULT_FORMAT
+
     ydl_opts = {
         'format': quality_format,
         'merge_output_format': 'mp4',

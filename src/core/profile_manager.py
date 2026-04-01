@@ -357,7 +357,7 @@ def download_profile(url: str, username: str, platform: str, base_path: str, pro
             temp_videos_root = Path(tempfile.gettempdir()) / "ProfilePull" / tmp_uuid
             temp_videos_root.mkdir(parents=True, exist_ok=True)
             
-            vid_info = download_video(vid_url, str(temp_videos_root))
+            vid_info = download_video(vid_url, str(temp_videos_root), platform=platform)
             
             raw_vc = vid_info.get("view_count", 0)
             if isinstance(raw_vc, str):
@@ -470,7 +470,7 @@ def download_single_video(url: str, username: str, platform: str, base_path: str
                     except:
                         pass
             
-            vid_info = download_video(url, str(temp_videos_root), progress_hook=ydl_hook)
+            vid_info = download_video(url, str(temp_videos_root), progress_hook=ydl_hook, platform=platform)
         
         raw_vc = vid_info.get("view_count", 0)
         if isinstance(raw_vc, str):
